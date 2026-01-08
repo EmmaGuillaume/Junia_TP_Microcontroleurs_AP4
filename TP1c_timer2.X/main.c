@@ -20,11 +20,14 @@
 #define DIR_LED8 TRISBbits.TRISB3
 
 void init_leds();
+void init_timer();
 void delay_approx();
 const int delay_cycles = 10000; // Nb of delay cycles
 
 void main(void) {
+    init_timer();
     init_leds();
+    
     while (1) {
         LED8 = 0;
         LED1 = 1;
@@ -40,23 +43,23 @@ void main(void) {
         delay_approx(); // wait
         LED3 = 0;
         LED4 = 1;
-        
+
         delay_approx(); // wait
         LED4 = 0;
         LED5 = 1;
-        
+
         delay_approx(); // wait
         LED5 = 0;
         LED6 = 1;
-        
+
         delay_approx(); // wait
         LED6 = 0;
-        LED7 = 1; 
-        
+        LED7 = 1;
+
         delay_approx();
         LED7 = 0;
-        LED8 = 1;   
-        
+        LED8 = 1;
+
         delay_approx();
     }
 }
@@ -80,8 +83,15 @@ void init_leds() {
     LED8 = 0;
 }
 
-void delay_approx() {
-    for (int i = 0; i < delay_cycles; i++) {
-    }
+void init_timer() {
+    PR2 = 255;
+    T2CONbits.T2CKPS = 11;
+    T2CONbits.T2OUTPS = 0111;
+    T2CONbits.TMR2ON = 1;
 }
 
+void delay_approx() {
+    while (!PIR1bits.TMR2IF) {
+    }
+    PIR1bits.TMR2IF = 0;
+}
