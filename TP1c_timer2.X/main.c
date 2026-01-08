@@ -1,4 +1,4 @@
-#include "configbits.h" // Bits de configuration
+#include "../Ressources/configbits.h" // Bits de configuration
 #include <xc.h>         // Definition des registres specifiques au uC
 
 #define LED1 LATDbits.LATD0
@@ -26,36 +26,58 @@ const int delay_cycles = 10000; // Nb of delay cycles
 void main(void) {
     init_leds();
     while (1) {
+        LED8 = 0;
+        LED1 = 1;
+
+        delay_approx(); // wait
         LED1 = 0;
+        LED2 = 1;
+
+        delay_approx(); // wait
         LED2 = 0;
+        LED3 = 1;
+
+        delay_approx(); // wait
         LED3 = 0;
+        LED4 = 1;
+        
+        delay_approx(); // wait
         LED4 = 0;
         LED5 = 1;
-        LED6 = 1;
-        LED7 = 1;
-        LED8 = 1;
+        
         delay_approx(); // wait
-        LED1 = 1;
-        LED2 = 1;
-        LED3 = 1;
-        LED4 = 1;
         LED5 = 0;
-        LED6 = 0;
-        LED7 = 0;
-        LED8 = 0;
+        LED6 = 1;
+        
         delay_approx(); // wait
+        LED6 = 0;
+        LED7 = 1; 
+        
+        delay_approx();
+        LED7 = 0;
+        LED8 = 1;   
+        
+        delay_approx();
     }
 }
 
 void init_leds() {
-    DIR_LED1 = 0; LED1 = 0;
-    DIR_LED2 = 0; LED2 = 0;
-    DIR_LED3 = 0; LED3 = 0;
-    DIR_LED4 = 0; LED4 = 0;
-    DIR_LED5 = 0; LED5 = 0;
-    DIR_LED6 = 0; LED6 = 0;
-    DIR_LED7 = 0; LED7 = 0;
-    DIR_LED8 = 0; LED8 = 0;
+    DIR_LED1 = 0;
+    LED1 = 0;
+    DIR_LED2 = 0;
+    LED2 = 0;
+    DIR_LED3 = 0;
+    LED3 = 0;
+    DIR_LED4 = 0;
+    LED4 = 0;
+    DIR_LED5 = 0;
+    LED5 = 0;
+    DIR_LED6 = 0;
+    LED6 = 0;
+    DIR_LED7 = 0;
+    LED7 = 0;
+    DIR_LED8 = 0;
+    LED8 = 0;
 }
 
 void delay_approx() {
