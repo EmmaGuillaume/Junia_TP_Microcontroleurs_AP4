@@ -84,10 +84,10 @@ void init_leds() {
 }
 
 void init_timer() {
-    PR2 = 255;
-    T2CONbits.T2CKPS = 11;
-    T2CONbits.T2OUTPS = 0111;
-    T2CONbits.TMR2ON = 1;
+    PR2 = 244;
+    T2CONbits.T2CKPS = 0b11;
+    T2CONbits.T2OUTPS = 0b1111;
+    T2CONbits.TMR2ON = 0b1; // Estimé avec la fomule a un totla de 0.12544 s soit environ 1/8 s 
 }
 
 void delay_approx() {
@@ -95,3 +95,4 @@ void delay_approx() {
     }
     PIR1bits.TMR2IF = 0;
 }
+
