@@ -3,28 +3,23 @@
 
 #define LED1 LATDbits.LATD0
 #define DIR_LED1 TRISDbits.TRISD0
-
+#define BUTTON1 PORTBbits.RB0
+#define DIR_BUTTON1 TRISBbits.TRISB0
 
 void config_timer2();
 void config_pwm4();
-void init_led();;
-void init_interrupt();
+void init_led_button();
 
 void main(void) {
-    init_led();
-    init_interrupt();
+    init_led_button();
     config_timer2();
     config_pwm4();
     while (1) {
-        
-    }
-}
-
-void __interrupt() isr(void) {
-    if (PIR1bits.TMR2IF) {
-        PIR1bits.TMR2IF = 0;
-
-        // interruption logic goes here
+        if(BUTTON1 == 1) {
+            PWM4DCH = 249; // (250 × 4 + 0) / 1000 = 1000/1000 = 100%
+        } else {
+            PWM4DCH = 24; // (25 × 4 + 0) / 1000 = 100/1000 = 10%
+        }
     }
 }
 
@@ -35,12 +30,16 @@ T2CONbits.T2OUTPS = 4; // Postscaler = 1:5
 PR2 = 249; // Période de Timer2 pour 40ms
 T2CONbits.TMR2ON = 1; // Activer Timer2
 }
+
 /* Configurer la PWM4 avec un rapport cyclique de 10% */
 void config_pwm4(void){
-PWM4DCH = 25; // Rapport cyclique (poids fort) : 25
-PWM4DCL = 0; // Rapport cyclique (poids faible) : 0
-// Soit rapport cyclique = [(25 << 2) + 0] / 4(249+1) = 0.1
-PWM4CONbits.PWM4EN = 1; // Activer PWM4
+    PWM4DCH = 0;
+    PWM4DCL = 0;
+
+    PWM4CONbits.PWM4EN = 1;  // Activer PWM4
+    
+    DIR_LED1 = 0; // RB0 = sortie
+    RD0PPS = 0x0F; // RB0 ? PWM4OUT
 }
 
 void init_interrupt() {
@@ -50,8 +49,10 @@ void init_interrupt() {
     INTCONbits.GIE = 1;
 }
 
-void init_led() {
-    DIR_LED1 = 0; LED1 = 0;
+void init_led_button() {
+    DIR_LED1 = 0; LED1 = 1;
+    DIR_BUTTON1 = 1;
+    ANSELBbits.ANSB0 = 0; // PAS analogique par pitié
 }
 
 
