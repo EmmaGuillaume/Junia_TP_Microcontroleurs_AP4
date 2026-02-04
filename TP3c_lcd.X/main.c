@@ -1,5 +1,7 @@
 #include "configbits.h" // Bits de configuration
 #include <xc.h>         // Definition des registres specifiques au uC
+#include "spi.h"
+#include "lcd.h"
 
 void config_uart();
 void recevoir_envoyer_char();
@@ -7,9 +9,15 @@ void init_interrupt();
 const int delay_cycles = 10000; // Nb of delay cycles
 
 void main(void) {
-    config_uart();
-    init_interrupt();
+    SPI_InitializePins();
+    LCD_InitializePins();
+    SPI_Initialize();
+    LCD_Initialize();
+    LCD_Clear();
+    LCD_GoTo(0,0);
+    LCD_WriteString("Hello world !");
     while(1){
+        
     }
 }
 
@@ -23,19 +31,19 @@ void __interrupt() isr(void) {
 void init_interrupt() {
     PIR1bits.RCIF = 0; // Efface le flag avant de commencer
     PIE1bits.RCIE = 1; // Active l'interruption de RCIF
-    INTCONbits.PEIE = 1; // Active les interruptions des p?riph?riques
+    INTCONbits.PEIE = 1; // Active les interruptions des périphériques
     INTCONbits.GIE = 1; // Active les interruptions globales
 }
 
 void config_uart() {
-    // Connecter RC6 ? TX/CK (via le registre RC6PPS)
+    // Connecter RC6 à TX/CK (via le registre RC6PPS)
     RC6PPS = 0b10100;
-    // Connecter RC7 ? RX (via le registre RXPPS)
+    // Connecter RC7 à RX (via le registre RXPPS)
     RXPPS = 0b10111;
     
     // RC6 : Sortie
     TRISCbits.TRISC6 = 0;
-    // RC7 : Entr?e num?rique
+    // RC7 : Entrée numérique
     TRISCbits.TRISC7 = 1;
     ANSELCbits.ANSC7 = 0; // PAS analogique
     
@@ -55,3 +63,4 @@ void config_uart() {
     // Activation du receiver (Bit CREN, registre RC1STA)
     RC1STAbits.CREN = 1;
 }
+
