@@ -1,30 +1,30 @@
 #include "configbits.h" // Bits de configuration
 #include <xc.h>         // Definition des registres specifiques au uC
 
-void delay_approx();
 void config_uart();
 void recevoir_envoyer_char();
+void init_interrupt();
 const int delay_cycles = 10000; // Nb of delay cycles
 
 void main(void) {
     config_uart();
+    init_interrupt();
     while(1){
-        recevoir_envoyer_char();
     }
 }
 
-void delay_approx() {
-    for (int i = 0; i < delay_cycles; i++) {
-    }
-}
-
-void recevoir_envoyer_char() {
-    if (PIR1bits.RCIF){
-        TX1REG = RC1REG;
+void __interrupt() isr(void) {
+    if (PIR1bits.RCIF) {
         PIR1bits.RCIF = 0;
+        TX1REG = RC1REG;
     }
+}
 
-        
+void init_interrupt() {
+    PIR1bits.RCIF = 0; // Efface le flag avant de commencer
+    PIE1bits.RCIE = 1; // Active l'interruption de RCIF
+    INTCONbits.PEIE = 1; // Active les interruptions des périphériques
+    INTCONbits.GIE = 1; // Active les interruptions globales
 }
 
 void config_uart() {
